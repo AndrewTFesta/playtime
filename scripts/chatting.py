@@ -30,7 +30,7 @@ MODEL_TASK = 'text-generation'
 MAX_NEW_TOKENS = 512
 TEMPERATURE = 0.1
 SECRETS_PATH = Path(project_properties.secrets_file)
-AUTH_TOKEN_NAME = 'huggingface_token_read'
+AUTH_TOKEN_NAME = 'huggingface_token'
 
 
 class AgentType(Enum):
@@ -98,9 +98,21 @@ def setup_pipeline():
 
 
 def main(main_args):
+    # error message if user tries to access a restricted model but there is no `secrets.yml` file (in the expected location)
+    #   right now, all models in MODEL_NAMES are restricted
+    if not SECRETS_PATH.exists():
+        print(f'Unable to locate secrets.yml in the expected location. This file should be placed in the top-most level of this project (next to the README).')
+        print(f'The project README has more information about setting up the secrets.yml file at the start of the Huggingface section.')
+        return
+
     with open(SECRETS_PATH, 'r') as secrets_file:
         secrets = yaml.safe_load(secrets_file)
-    auth_token = secrets[AUTH_TOKEN_NAME]
+
+    auth_token = secrets.get(AUTH_TOKEN_NAME, None)
+    if not auth_token:
+        print(f'The secrets file exists, but it does not contain a key for the authorization token. Add a {AUTH_TOKEN_NAME} variable generated for your Huggingface account.')
+        print(f'The project README has more information about setting up the secrets.yml file at the start of the Huggingface section.')
+        return
     chat = [
         {'role': 'system', 'content': 'You are a sassy, wise-cracking robot as imagined by Hollywood circa 1986.'},
         {'role': 'user', 'content': 'Hey, can you tell me any fun things to do in New York?'}

@@ -46,6 +46,18 @@ I've included notes and a few code snippets in [`scripts\documents.py`](scripts/
 
 # Huggingface
 
+[This](https://huggingface.co/) is just an amazing resource for transformers and machine learning in general.
+
+Some of their stuff requires you to have an account (e.g. using gated public models). This also requires using an authorization token when accessing restricted functionality. So, rather than just committing my token to git like any sane developer, I added a `secrets.yml` file to hold my *precious*. To use this code as is, you'll want to create this file and place it in the top-most directory of the project (next to this README), as shown in the figure below.
+
+![Project structure](docs/project_structure.png)
+
+Then, go to your account, generate a auth token, and add a line to `secrets.yml`. More details instructions about setting up and using an auth token for your account can be found [here.](https://huggingface.co/docs/hub/security-tokens) 
+
+`huggingface_token: 'hf_...'`
+
+As a final note, Huggingface's documentation is pretty amazing and thorough too, so I'm just going to be lazy and mostly quote relevant bits.
+
 ## Datasets
 
 [Setup and installation](https://huggingface.co/docs/datasets/en/installation)
