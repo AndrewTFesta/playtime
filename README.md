@@ -3,6 +3,12 @@ Playtime
 
 Notes and important documentation I've picked up while working with various libraries on various projects, or even just playing around.
 
+> Block quotes are directly from a source.
+
+Normal text is my ramblings.
+
+Sometimes, multiple lines of code will by inlined rather than as a block because pycharm lets me run inlined (python) code directly from the README. And it's runs in the project interpreter!
+
 # Virtual Environment
 
 ```
@@ -10,6 +16,24 @@ python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 ```
+
+# PyTorch
+
+Installing pytorch is a bit more effort than just `pip install...` unfortunately.
+
+If we don't care about using our fancy GPU(s), we can install it just for cpu. The nice thing here is this works for both windows and linux. And mac, if that's you. And hey, you do you.
+
+`pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu`
+
+For gpu, linux and windows have the same command, but you first need to find the version of cuda on your system. For me, it's `cuda_12.1`. If you need to download cuda, you will likely need to download a (slightly) older version. As of right now, the newest version of cuda is 12.5, but pytorch supports up `11.8` and `12.1`. You can download archived versions of cuda [here.](https://developer.nvidia.com/cuda-toolkit-archive)
+
+- [CUDA Toolkit 12.1.1](https://developer.nvidia.com/cuda-12-1-1-download-archive)
+- [CUDA Toolkit 11.8.0](https://developer.nvidia.com/cuda-11-8-0-download-archive)
+
+`nvcc --version`
+`pip3 install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu121`
+
+Also, important to note that pytorch only supports running ROCm on linux.
 
 # Documents
 
@@ -23,10 +47,10 @@ pip install -r requirements.txt
 
 I primarily use pytorch, but you can use either pytorch, tensorflow, or jax.
 
-```
-pip install datasets
-python -c "from datasets import load_dataset; print(load_dataset('squad', split='train')[0])"
-```
+`pip install datasets`
+
+`python -c "from datasets import load_dataset; print(load_dataset('squad', split='train')[0])"`
+
 ```
 {
   'answers': {
@@ -85,8 +109,6 @@ audio_dataset = Dataset.from_dict({"audio": ["path/to/audio_1", "path/to/audio_2
 print(audio_dataset[0]["audio"])
 ```
 
-
-
 ### Resample
 
 > Some models expect the audio data to have a certain sampling rate due to how the model was pretrained. For example, the `XLSR-Wav2Vec2` model expects the input to have a sampling rate of 16kHz, but an audio file from the Common Voice dataset has a sampling rate of 48kHz. You can use [Dataset.cast_column()](https://huggingface.co/docs/datasets/v2.2.1/en/package_reference/main_classes#datasets.Dataset.cast_column) to downsample the sampling rate to 16kHz:
@@ -101,7 +123,7 @@ print(audio_dataset[0]["audio"])
 
 ### Fine-tuning
 
-For pretrained speech recognition models, such as `facebook/wav2vec2-large-xlsr-53`, a tokenizer needs to be created from the target text as explained [here](https://huggingface.co/blog/fine-tune-wav2vec2-english). The following example demonstrates how to load a feature extractor, tokenizer and processor for a pretrained speech recognition model.
+> For pretrained speech recognition models, such as `facebook/wav2vec2-large-xlsr-53`, a tokenizer needs to be created from the target text as explained [here](https://huggingface.co/blog/fine-tune-wav2vec2-english). The following example demonstrates how to load a feature extractor, tokenizer and processor for a pretrained speech recognition model.
 
 ```python
 from transformers import AutoTokenizer, AutoFeatureExtractor, Wav2Vec2Processor
@@ -112,7 +134,7 @@ feature_extractor = AutoFeatureExtractor.from_pretrained(model_checkpoint)
 processor = Wav2Vec2Processor.from_pretrained(feature_extractor=feature_extractor, tokenizer=tokenizer)
 ```
 
-For fine-tuned speech recognition models, you can simply load a predefined processor object with:
+> For fine-tuned speech recognition models, you can simply load a predefined processor object with:
   
 ```
 from transformers import Wav2Vec2Processor
@@ -136,6 +158,10 @@ common_voice_train = common_voice_train.map(prepare_dataset, remove_columns=comm
 ## Vision
 
 `pip install datasets[vision]`
+
+### Depth estimation
+
+This is of particular interest as a lot of the time for low-cost and/or small applications, we only have a single camera to work with (assuming we have a camera in the first place). For instance, in small and FPV style drones, the view from the drone is from a single, mounted camera. The camera may be able to move (my moving the drone), but of course, this means we can't move the drone independently of the camera. And even when there is some independent movement between the two, the scale and types of movements are very limited (e.g. angle shift or swivel).
 
 ## Pipelines
 
