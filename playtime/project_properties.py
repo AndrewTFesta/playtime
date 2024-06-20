@@ -28,8 +28,8 @@ project_path = Path(source_package).parent
 # Paths to store assets and related resources
 # --------------------------------------------
 configs_dir = Path(project_path, 'configs')
-data_dir = Path(project_path, '../data')
-model_dir = Path(project_path, '../models')
+data_dir = Path(project_path, 'data')
+model_dir = Path(project_path, 'models')
 doc_dir = Path(project_path, 'docs')
 profiles_dir = Path(data_dir, 'profiles')
 
@@ -37,6 +37,7 @@ profiles_dir = Path(data_dir, 'profiles')
 # config files
 # paths to specific resource and configuration files
 # --------------------------------------------
+secrets_file = Path(project_path, 'secrets.yml')
 secrets_dir = Path(configs_dir, 'project_secrets')
 config_dir = Path(project_path, 'configs')
 

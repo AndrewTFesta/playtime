@@ -9,8 +9,8 @@ argparse
 torch
 minigrid
 stable_baselines3
-plotly
 requests
 scikit-learn
-PyYAML
 transformers
+PyYAML
+accelerate
