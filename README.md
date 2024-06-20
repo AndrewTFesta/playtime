@@ -31,13 +31,18 @@ For gpu, linux and windows have the same command, but you first need to find the
 - [CUDA Toolkit 11.8.0](https://developer.nvidia.com/cuda-11-8-0-download-archive)
 
 `nvcc --version`
+
 `pip3 install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu121`
 
 Also, important to note that pytorch only supports running ROCm on linux.
 
-# Documents
+# Microsoft Word
+
+Sometimes you just have to work with `.docx` files, unfortunately. They can be a bit of a pain to parse, but they're essentially just zipped `xml` files. [python-docx](https://python-docx.readthedocs.io/en/latest/) package is the best one I've found to create and manipulate `docx` files. And while it works fine for reading files, the documentation for that purpose is rather lacking.
 
 `pip install python-docx`
+
+I've included notes and a few code snippets in [`scripts\documents.py`](scripts/documents.py) regarding reading and writing word documents.
 
 # Huggingface
 
@@ -86,7 +91,7 @@ I primarily use pytorch, but you can use either pytorch, tensorflow, or jax.
 > `audio` is the actual audio file that is loaded and resampled on-the-fly upon calling it.
 
 ```python
-from datasets import load_dataset, load_metric, Audio
+from datasets import load_dataset
 
 common_voice = load_dataset("common_voice", "tr", split="train")
 
@@ -105,6 +110,7 @@ print(common_voice[0]["path"])
 > You can load your own dataset using the paths to your audio files. Use the `cast_column()` function to take a column of audio file paths, and cast it to the Audio feature:
 
 ```python
+from datasets import Audio, Dataset
 audio_dataset = Dataset.from_dict({"audio": ["path/to/audio_1", "path/to/audio_2", ..., "path/to/audio_n"]}).cast_column("audio", Audio())
 print(audio_dataset[0]["audio"])
 ```
