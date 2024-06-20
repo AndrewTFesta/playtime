@@ -14,3 +14,4 @@ scikit-learn
 transformers
 PyYAML
 accelerate
+python-docx

@@ -7,11 +7,13 @@
 import argparse
 from pathlib import Path
 
+from transformers import AutoTokenizer, AutoFeatureExtractor, Wav2Vec2Processor
 from transformers import pipeline
 
 from playtime import project_properties
 
 MODEL_TASK = 'automatic-speech-recognition'
+# https://huggingface.co/models?pipeline_tag=automatic-speech-recognition&sort=trending
 MODEL_NAMES = [
     'facebook/wav2vec2-base-960h',
     'openai/whisper-large-v2'
@@ -27,6 +29,19 @@ DANI_AUDIO = [
     for each_ext in AUDIO_EXTS
     for each_file in Path(project_properties.data_dir, 'The Fantasy Realm').glob(f'**/*.{each_ext}')
 ]
+
+
+def fine_tune():
+    """
+
+    :return:
+    """
+    model_checkpoint = "facebook/wav2vec2-large-xlsr-53"
+    # after defining a vocab.json file you can instantiate a tokenizer object:
+    tokenizer = AutoTokenizer("./vocab.json", unk_token="[UNK]", pad_token="[PAD]", word_delimiter_token="|")
+    feature_extractor = AutoFeatureExtractor.from_pretrained(model_checkpoint)
+    processor = Wav2Vec2Processor.from_pretrained(feature_extractor=feature_extractor, tokenizer=tokenizer)
+    return
 
 
 def dani_data():
