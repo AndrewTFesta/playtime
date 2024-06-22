@@ -11,7 +11,7 @@ from docx import Document
 
 from playtime import project_properties
 
-DEFAULT_DIR = Path(project_properties.data_dir, 'documents')
+WORD_DIR = Path(project_properties.data_dir, 'word')
 
 
 def document_text(doc_name):
@@ -86,11 +86,11 @@ def main(main_args):
     Docs are focused on creating and manipulating *existing* docs, don't explain much in the way of *reading* docs.
     :return:
     """
-    create_name = Path(DEFAULT_DIR, 'test_doc.docx')
+    create_name = Path(WORD_DIR, 'test_doc.docx')
     if not create_name.exists():
         create_blank(create_name)
 
-    open_name = str(Path(DEFAULT_DIR.parent, 'The Fantasy Realm', 'Immortal Guardian.docx'))
+    open_name = str(Path(WORD_DIR.parent, 'The Fantasy Realm', 'Immortal Guardian.docx'))
     text = document_text(open_name)
     print(text)
     return

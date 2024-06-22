@@ -9,7 +9,25 @@ Normal text is my ramblings.
 
 Sometimes, multiple lines of code will by inlined rather than as a block because pycharm lets me run inlined (python) code directly from the README. And it's runs in the project interpreter!
 
-# Virtual Environment
+- [Quickstart](#quickstart)
+  - [Virtual Environments](#virtual-environment)
+  - [Pytorch](#pytorch)
+  - [Directory and Project Structure](#directory-and-project-structure)
+- [Microsoft Word](#microsoft-word)
+- [Huggingface](#huggingface)
+  - [Datasets](#datasets)
+  - [Audio](#audio)
+    - [Local Audio](#local-audio)
+    - [Resampling](#resampling)
+    - [Mapping](#mapping)
+    - [Fine-Tuning](#fine-tuning)
+  - [Vision](#vision)
+  - [Pipelines](#pipelines)
+  - [Stream](#stream)
+
+# Quickstart
+
+## Virtual Environment
 
 ```
 python -m venv .venv
@@ -17,7 +35,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-# PyTorch
+## PyTorch
 
 Installing pytorch is a bit more effort than just `pip install...` unfortunately.
 
@@ -36,13 +54,53 @@ For gpu, linux and windows have the same command, but you first need to find the
 
 Also, important to note that pytorch only supports running ROCm on linux.
 
+## Directory and Project Structure
+
+# Hosting and Deployment
+
+## Huggingface
+
+### Huggingface Model Hub
+
+`pip install huggingface_hub`
+
+### Inference
+
+- [Serverless](https://huggingface.co/docs/api-inference/index)
+- [Dedicated](https://huggingface.co/docs/inference-endpoints/index)
+
+## [Gradio](https://www.gradio.app/guides/quickstart)
+
+> ✍️ Tip: When developing locally, you can run your Gradio app in hot reload mode, which automatically reloads the Gradio app whenever you make changes to the file. To do this, simply type in `gradio` before the name of the file instead of `python`. Learn more about hot reloading in the [Hot Reloading Guide.](https://www.gradio.app/guides/developing-faster-with-reload-mode)
+
+## [Streamlit](https://streamlit.io/)
+
 # Microsoft Word
 
 Sometimes you just have to work with `.docx` files, unfortunately. They can be a bit of a pain to parse, but they're essentially just zipped `xml` files. [python-docx](https://python-docx.readthedocs.io/en/latest/) package is the best one I've found to create and manipulate `docx` files. And while it works fine for reading files, the documentation for that purpose is rather lacking.
 
 `pip install python-docx`
 
-I've included notes and a few code snippets in [`scripts\documents.py`](scripts/documents.py) regarding reading and writing word documents.
+I've included notes and a few code snippets in [`scripts\documents.py`](scripts/word_docs.py) regarding reading and writing word documents.
+
+# PDF Parsing
+
+It turns out parsing PDFs is hard. Really hard. The format is very exact, which is nice for producing aesthetically pleasing documents, but the way PDFs accomplish it is by placing items at exact locations. In some cases, this can make parsing pretty straightforward as you just need to locate the item on the page (or in the document structure) and read the text. Simple. Easy. Done.
+
+The difficulty comes from two (common) occurrences:
+
+1. Layout changing from one file to the next
+2. Extra artifacts and structures placed on the page
+
+The first is basically a given. Very rarely will you have multiple files with the same exact structure, unless possibly they were generated using a shared template. Even then, figures, authors, and a bunch of other factors may make a parser built for one file fail on the next.
+
+The second is an issue because it can (and will) cause text to randomly appear in the extracted text. Headers, for instance, will cause extra lines to appear at the start of a page. Sometimes, while annoying, it's surmountable. Identify a common structure between pages and remove the first `N` lines at the start of every page. Footers can be dealt with similarly sometimes. Footnotes not so much. The issue with footnotes is their lack of consistency. They will (often) be pre-pended with a sequential number, and so you could try removing lines at the end of a page that follow this trend. But with a footer, they won't be at the end of a page. Again, doable, but annoying. Very annoying.
+
+It seems the recommended path is to convert the PDF to an image and then use OCR to extract your text. But this still has an issue of location and changing structure. And so, it's hard to build a general purpose parser that works for PDFs. Instead, you have to build a parser for a specific layout. And at that point, it feels like it'd be faster to just copy-paste the text from the PDF I care about. Sure, we'd all still write the program, because why spend 5 minutes on something that you can automate in 4 hours?
+
+I've built a few examples on parsing PDFs in [pdf_parse.py](scripts/pdf_parse.py) that I am building out as the need arises. For now, the best packages I've found (without going tht image->OCR route) are [`pdfminer.six`](https://github.com/pdfminer/pdfminer.six) and [`pypdf`.](https://github.com/py-pdf/pypdf)
+
+I'm starting to hate PDFs almost as much as Word. Almost.
 
 # Huggingface
 
@@ -117,7 +175,7 @@ print(common_voice[0]["path"])
 
 `my_audio_dataset = my_audio_dataset.cast_column("paths_to_my_audio_files", Audio())`
 
-## Local audio
+### Local audio
 
 > You can load your own dataset using the paths to your audio files. Use the `cast_column()` function to take a column of audio file paths, and cast it to the Audio feature:
 
@@ -127,7 +185,7 @@ audio_dataset = Dataset.from_dict({"audio": ["path/to/audio_1", "path/to/audio_2
 print(audio_dataset[0]["audio"])
 ```
 
-### Resample
+### Resampling
 
 > Some models expect the audio data to have a certain sampling rate due to how the model was pretrained. For example, the `XLSR-Wav2Vec2` model expects the input to have a sampling rate of 16kHz, but an audio file from the Common Voice dataset has a sampling rate of 48kHz. You can use [Dataset.cast_column()](https://huggingface.co/docs/datasets/v2.2.1/en/package_reference/main_classes#datasets.Dataset.cast_column) to downsample the sampling rate to 16kHz:
 
@@ -135,11 +193,11 @@ print(audio_dataset[0]["audio"])
 
 ![Resample animation](docs/resample.gif)
 
-### Map
+### Mapping
 
 > Just like text datasets, you can apply a preprocessing function over an entire dataset with [Dataset.map()](https://huggingface.co/docs/datasets/v2.2.1/en/package_reference/main_classes#datasets.Dataset.map), which is useful for preprocessing all of your audio data at once.
 
-### Fine-tuning
+### Fine-Tuning
 
 > For pretrained speech recognition models, such as `facebook/wav2vec2-large-xlsr-53`, a tokenizer needs to be created from the target text as explained [here](https://huggingface.co/blog/fine-tune-wav2vec2-english). The following example demonstrates how to load a feature extractor, tokenizer and processor for a pretrained speech recognition model.
 

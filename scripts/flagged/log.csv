@@ -1,0 +1,4 @@
+Select hot dog candidate,Processed Image,Result,flag,username,timestamp
+,,"{""label"": null, ""confidences"": null}",,,2024-06-21 14:19:49.029552
+flagged\Select hot dog candidate\3e048cda35a3bbac7a97\Screenshot 2024-02-14 110835.png,flagged\Processed Image\ee5e05d244dc6d824fa6\image.webp,"{""label"": ""hot dog"", ""confidences"": [{""label"": ""hot dog"", ""confidence"": 0.5400866270065308}, {""label"": ""not hot dog"", ""confidence"": 0.45991334319114685}]}",,,2024-06-21 14:20:22.188206
+flagged\Select hot dog candidate\1d2759f7b9261878f34c\webcam.png,flagged\Processed Image\f1a8a04815f126eca025\image.webp,"{""label"": ""hot dog"", ""confidences"": [{""label"": ""hot dog"", ""confidence"": 0.5114463567733765}, {""label"": ""not hot dog"", ""confidence"": 0.48855361342430115}]}",,,2024-06-21 14:20:57.203206
